@@ -8,9 +8,9 @@ namespace NotificationsBridgeClean
         {
             InitializeComponent();
 
-#if ANDROID
-            Platforms.Android.NotificationAccessHelper.OpenSettings();
-#endif
+//#if ANDROID
+//            Platforms.Android.NotificationAccessHelper.OpenSettings();
+//#endif
         }
     }
 }
