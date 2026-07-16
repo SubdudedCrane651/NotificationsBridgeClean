@@ -27,8 +27,10 @@ namespace BotificationsBridgeClean.Platforms.Android
         private async void SendToBackend()
         {
             var client = new HttpClient();
-            await client.PostAsync("http://solutiontech.3utilities.com:8123/api/webhook/glucosenotification",
-                new StringContent("", Encoding.UTF8, "application/json"));
+            await client.PostAsync(
+                "http://10.0.0.205:8123/api/webhook/glucosenotification",
+                null
+            );
         }
 
         public override void OnListenerConnected()

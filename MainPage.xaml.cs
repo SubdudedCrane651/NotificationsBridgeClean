@@ -7,10 +7,28 @@ namespace NotificationsBridgeClean
         public MainPage()
         {
             InitializeComponent();
+        }
 
-//#if ANDROID
-//            Platforms.Android.NotificationAccessHelper.OpenSettings();
-//#endif
+        //#if ANDROID
+        //            Platforms.Android.NotificationAccessHelper.OpenSettings();
+        //#endif
+
+        private async void OnTestWebhookClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var client = new HttpClient();
+                var response = await client.PostAsync(
+                    "http://10.0.0.205:8123/api/webhook/glucosenotification",
+                    null
+                );
+
+                await DisplayAlert("Webhook", $"Status: {response.StatusCode}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", ex.Message, "OK");
+            }
         }
     }
 }
