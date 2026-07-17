@@ -43,10 +43,12 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 	  <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
 	  <ApplicationId>com.maui.notificationsbridgeclean</ApplicationId>
+	  <ApplicationTitle>NotificationsBridgeClean</ApplicationTitle>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
 	  <ApplicationId>com.maui.notificationsbridgeclean</ApplicationId>
+	  <ApplicationTitle>NotificationsBridgeClean</ApplicationTitle>
 	</PropertyGroup>
 
 	<ItemGroup>

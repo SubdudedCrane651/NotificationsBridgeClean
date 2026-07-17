@@ -7,7 +7,7 @@ using Android.Util;
 namespace NotificationsBridgeClean.Platforms.Android
 {
     [Service(
-        Label = "GlucoseNotificationListener",
+        Name = "com.maui.notificationsbridgeclean.NotificationsBridgeClean.Platforms.Android.NotificationListener",
         Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE",
         Exported = true)]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
@@ -15,9 +15,17 @@ namespace NotificationsBridgeClean.Platforms.Android
     {
         public override void OnListenerConnected()
         {
-            base.OnListenerConnected();
+            Log.Info("NB", "ListenerConnected fired"); // <-- Fix: Use Log.Info directly
 
-            var notification = new Notification.Builder(this)
+            var channel = new NotificationChannel(
+                "nb_channel",
+                "NotificationsBridge",
+                NotificationImportance.High);
+
+            var manager = (NotificationManager)GetSystemService(NotificationService);
+            manager.CreateNotificationChannel(channel);
+
+            var notification = new Notification.Builder(this, "nb_channel")
                 .SetContentTitle("NotificationsBridge is running")
                 .SetContentText("Listening for notifications")
                 .SetSmallIcon(global::Android.Resource.Drawable.IcDialogInfo)
@@ -25,6 +33,7 @@ namespace NotificationsBridgeClean.Platforms.Android
 
             StartForeground(1, notification);
         }
+
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
