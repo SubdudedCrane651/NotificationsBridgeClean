@@ -15,25 +15,46 @@ namespace NotificationsBridgeClean.Platforms.Android
     {
         public override void OnListenerConnected()
         {
-            Log.Info("NB", "ListenerConnected fired"); // <-- Fix: Use Log.Info directly
+            try
+            {
+                Log.Info("NB", "OnListenerConnected() entered");
 
-            var channel = new NotificationChannel(
-                "nb_channel",
-                "NotificationsBridge",
-                NotificationImportance.High);
+                var manager = (NotificationManager)Android.App.Application.Context
+                    .GetSystemService(NotificationService);
 
-            var manager = (NotificationManager)GetSystemService(NotificationService);
-            manager.CreateNotificationChannel(channel);
+                if (manager == null)
+                {
+                    Log.Warn("NB", "NotificationManager is null");
+                    return;
+                }
 
-            var notification = new Notification.Builder(this, "nb_channel")
-                .SetContentTitle("NotificationsBridge is running")
-                .SetContentText("Listening for notifications")
-                .SetSmallIcon(global::Android.Resource.Drawable.IcDialogInfo)
-                .Build();
+                const string channelId = "nb_channel";
 
-            StartForeground(1, notification);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    var channel = new NotificationChannel(
+                        channelId,
+                        "NotificationsBridge",
+                        NotificationImportance.Low);
+
+                    manager.CreateNotificationChannel(channel);
+                }
+
+                var notification = new Notification.Builder(Android.App.Application.Context, channelId)
+                    .SetContentTitle("NotificationsBridge is running")
+                    .SetContentText("Listening for notifications")
+                    .SetSmallIcon(Android.Resource.Drawable.IcDialogInfo)
+                    .Build();
+
+                StartForeground(1, notification);
+
+                Log.Info("NB", "OnListenerConnected() completed");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("NB", $"OnListenerConnected crashed: {ex}");
+            }
         }
-
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
@@ -42,18 +63,24 @@ namespace NotificationsBridgeClean.Platforms.Android
                 var extras = sbn.Notification.Extras;
                 var text = extras?.GetString("android.text");
 
-                if (!string.IsNullOrEmpty(text))
-                {
-                    var client = new System.Net.Http.HttpClient();
-                    client.PostAsync(
-                        "http://10.0.0.205:8123/api/webhook/glucosenotification",
-                        null
-                    );
-                }
+                if (string.IsNullOrEmpty(text))
+                    return;
+
+                // ⭐ Only react when the notification text contains "glucose"
+                if (!text.Contains("glucose", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                Log.Info("NB", $"Glucose notification: {text}");
+
+                var client = new System.Net.Http.HttpClient();
+                client.PostAsync(
+                    "http://10.0.0.205:8123/api/webhook/glucosenotification",
+                    new StringContent(text)
+                );
             }
             catch (Exception ex)
             {
-                Log.Error("NotificationsBridge", ex.ToString());
+                Log.Error("NB", ex.ToString());
             }
         }
     }
