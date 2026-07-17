@@ -19,8 +19,8 @@ namespace NotificationsBridgeClean.Platforms.Android
             {
                 Log.Info("NB", "OnListenerConnected() entered");
 
-                var manager = (NotificationManager)Android.App.Application.Context
-                    .GetSystemService(NotificationService);
+                // Replace 'Android.App.Application.Context' with 'Application.Context' to fix CS0234
+                var manager = (NotificationManager)global::Android.App.Application.Context.GetSystemService(NotificationService);
 
                 if (manager == null)
                 {
@@ -40,10 +40,10 @@ namespace NotificationsBridgeClean.Platforms.Android
                     manager.CreateNotificationChannel(channel);
                 }
 
-                var notification = new Notification.Builder(Android.App.Application.Context, channelId)
+                var notification = new Notification.Builder(global::Android.App.Application.Context, channelId)
                     .SetContentTitle("NotificationsBridge is running")
                     .SetContentText("Listening for notifications")
-                    .SetSmallIcon(Android.Resource.Drawable.IcDialogInfo)
+                    .SetSmallIcon(global::Android.Resource.Drawable.IcDialogInfo)
                     .Build();
 
                 StartForeground(1, notification);
