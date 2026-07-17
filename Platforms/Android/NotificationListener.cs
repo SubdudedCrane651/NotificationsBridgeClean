@@ -61,20 +61,46 @@ namespace NotificationsBridgeClean.Platforms.Android
             try
             {
                 var extras = sbn.Notification.Extras;
-                var text = extras?.GetString("android.text");
+                if (extras == null)
+                    return;
+
+                // Extract text from common fields
+                string[] keys =
+                {
+            "android.text",
+            "android.bigText",
+            "android.title",
+            "android.title.big"
+        };
+
+                string text = null;
+
+                foreach (var key in extras.KeySet())
+                {
+                    var value = extras.Get(key);
+                    Log.Info("NB", $"EXTRA KEY: {key} = {value}");
+                text=value?.ToString();
+                    if (!string.IsNullOrEmpty(text))
+                        break;
+                }
+
+                Log.Info("NB", $"Notification Text: {text}");
 
                 if (string.IsNullOrEmpty(text))
                     return;
 
-                // ⭐ Only react when the notification text contains "glucose"
-                if (!text.Contains("glucose", StringComparison.OrdinalIgnoreCase))
+                // ⭐ Correct filter for Google Home glucose notifications
+                if (!text.Contains("glucose", StringComparison.OrdinalIgnoreCase) &&
+                    !text.Contains("GlucoseInfo", StringComparison.OrdinalIgnoreCase))
+                {
                     return;
+                }
 
-                Log.Info("NB", $"Glucose notification: {text}");
+                Log.Info("NB", $"Google Home glucose notification: {text}");
 
                 var client = new System.Net.Http.HttpClient();
                 client.PostAsync(
-                    "http://10.0.0.205:8123/api/webhook/glucosenotification",
+                    "http://solutiontech.3utilities.com:8123/api/webhook/glucosenotification",
                     new StringContent(text)
                 );
             }
@@ -83,5 +109,6 @@ namespace NotificationsBridgeClean.Platforms.Android
                 Log.Error("NB", ex.ToString());
             }
         }
+
     }
 }
