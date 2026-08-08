@@ -19,7 +19,7 @@ namespace NotificationsBridgeClean
             {
                 var client = new HttpClient();
                 var response = await client.PostAsync(
-                    "http://10.0.0.205:8123/api/webhook/glucosenotification",
+                    "https://homeassistant-mini/api/webhook/glucosenotification",
                     null
                 );
 
