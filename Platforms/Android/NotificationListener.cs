@@ -100,7 +100,7 @@ namespace NotificationsBridgeClean.Platforms.Android
 
                 var client = new System.Net.Http.HttpClient();
                 client.PostAsync(
-                    "https://homeassistant-mini.com/api/webhook/glucosenotification",
+                    "http://10.0.0.205:8123/api/webhook/glucosenotification",
                     new StringContent(text)
                 );
             }
