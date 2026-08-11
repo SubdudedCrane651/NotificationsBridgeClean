@@ -1,1 +1,1 @@
-﻿A Great Net Maui Android only App that captures the notification in the case glucose where it runs a Home Assistant automation to log the glucose value in a Google Sheet. It also has a feature to send a notification to the user when the glucose value is logged successfully.
+A great Net Maui APP for Android only to catch notifications in my case glucose to run a Home Assistant webhook to give my live glucose reading in my case the Google Nest Mini (2nd Generation)
